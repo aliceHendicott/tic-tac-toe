@@ -10,7 +10,9 @@ const GridContainer = styled(Box)`
   height: 390px;
 `;
 
-const GameBoardContainer = styled.div``;
+const GameInfoContainer = styled.div`
+  padding: 30px;
+`;
 
 const GridBox = styled.div`
   display: inline-block;
@@ -38,7 +40,6 @@ const EntrySvg = styled.svg`
 
 const CurrentPlayerDisplay = styled.div`
   font-size: 3rem;
-  text-align: center;
   font-weight: 400;
   margin-bottom: 10px;
 `;
@@ -105,21 +106,26 @@ const GameBoard = () => {
 
   return (
     <Contents>
-      <GameBoardContainer>
+      <GridContainer>
+        {currentGameState &&
+          currentGameState.map((value, index) => (
+            <GridBox id={"box-" + index} onClick={() => handleClick(index)}>
+              {getSVGToDisplay(value)}
+            </GridBox>
+          ))}
+      </GridContainer>
+      <GameInfoContainer>
         {currentPlayer !== undefined && (
           <CurrentPlayerDisplay>
             Current Player: {convertPlayerTokenToNumber(currentPlayer)}
           </CurrentPlayerDisplay>
         )}
-        <GridContainer>
-          {currentGameState &&
-            currentGameState.map((value, index) => (
-              <GridBox id={"box-" + index} onClick={() => handleClick(index)}>
-                {getSVGToDisplay(value)}
-              </GridBox>
-            ))}
-        </GridContainer>
-      </GameBoardContainer>
+        {playerTokens !== undefined && (
+          <CurrentPlayerDisplay>
+            You are player {convertPlayerTokenToNumber(playerId)}
+          </CurrentPlayerDisplay>
+        )}
+      </GameInfoContainer>
     </Contents>
   );
 };
