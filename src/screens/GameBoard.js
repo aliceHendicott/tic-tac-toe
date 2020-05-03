@@ -88,9 +88,9 @@ const GridLines = () => (
 );
 
 const GameBoard = () => {
-  const gameId = window.location.pathname.replace(/^\//, "");
+  const gameId = window.location.hash.replace(/^#\//, "").replace(/\?.*/, "");
   const gamesRef = database.ref("games");
-  const playerId = window.location.search.replace(/\?p=/, "");
+  const playerId = window.location.hash.replace(/#\/.*=/, "");
 
   const [data, setData] = useState(undefined);
   const [playerTokens, setPlayerTokens] = useState(undefined);

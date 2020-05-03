@@ -3,6 +3,7 @@ import generateToken from "../gameLogic/generateToken";
 
 import Button from "../components/Button";
 import Contents from "../components/Contents";
+import { withRouter } from "react-router";
 
 import { database } from "../firebase";
 
@@ -22,7 +23,7 @@ const createGame = () => {
 
   game.set(newGame).then(
     () => {
-      window.location = `/${game_id}?p=${newGame.p1_token}`;
+      window.location = `#/${game_id}?p=${newGame.p1_token}`;
     },
     err => {
       throw err;
@@ -32,8 +33,8 @@ const createGame = () => {
 
 const Home = () => (
   <Contents>
-    <Button onClick={createGame}>Start a new game</Button>
+    <Button onClick={createGame}>Start a new game (4)</Button>
   </Contents>
 );
 
-export default Home;
+export default withRouter(Home);
