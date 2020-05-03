@@ -8,15 +8,17 @@ import { database } from "../firebase";
 
 const createGame = () => {
   const newGame = {
-    p1_token: generateToken(),
-    p2_token: generateToken()
+    p1_token: generateToken(4),
+    p2_token: generateToken(4)
   };
 
-  const game = database.ref("games").push();
+  const game_id = generateToken(6);
+
+  const game = database.ref("games/" + game_id);
 
   game.set(newGame).then(
     () => {
-      window.location = `/${newGame.p1_token}`;
+      window.location = `/${game_id}?p=${newGame.p1_token}`;
     },
     err => {
       throw err;
