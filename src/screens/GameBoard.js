@@ -8,6 +8,7 @@ import { database } from "../firebase";
 const GridContainer = styled(Box)`
   width: 390px;
   height: 390px;
+  /* position: absolute; */
 `;
 
 const GameInfoContainer = styled.div`
@@ -16,8 +17,10 @@ const GameInfoContainer = styled.div`
 
 const GridBox = styled.div`
   display: inline-block;
-  width: 130px;
-  height: 130px;
+  width: 128px;
+  height: 128px;
+  z-index: 15;
+  border: 1px solid #393e41;
 `;
 
 const Line = styled.line`
@@ -44,6 +47,20 @@ const CurrentPlayerDisplay = styled.div`
   margin-bottom: 10px;
 `;
 
+const GridSvg = styled.svg`
+  position: relative;
+  width: 390px;
+  height: 390px;
+  z-index: 10;
+  margin: 50px;
+`;
+
+const GridLine = styled.line`
+  stroke: #393e41;
+  stroke-width: 8px;
+  stroke-linecap: round;
+`;
+
 const getSVGToDisplay = value => {
   if (value === 1) {
     return (
@@ -60,6 +77,15 @@ const getSVGToDisplay = value => {
     );
   } else return "";
 };
+
+const GridLines = () => (
+  <GridSvg>
+    <GridLine x1="126" x2="126" y1="4" y2="386" />
+    <GridLine x1="256" x2="256" y1="4" y2="386" />
+    <GridLine x1="4" x2="386" y1="126" y2="126" />
+    <GridLine x1="4" x2="386" y1="256" y2="256" />
+  </GridSvg>
+);
 
 const GameBoard = () => {
   const gameId = window.location.pathname.replace(/^\//, "");
@@ -79,16 +105,23 @@ const GameBoard = () => {
     }
   };
 
+  const indexAvailable = boxIndex => {
+    return currentGameState[boxIndex] === 0 ? true : false;
+  };
+
   const handleClick = boxIndex => {
-    const updatedGameState = [...currentGameState];
-    if (currentPlayer === playerId) {
-      const playerNum = convertPlayerTokenToNumber(currentPlayer);
-      updatedGameState[boxIndex] = playerNum;
-      const nextPlayer = playerNum === 1 ? playerTokens[1] : playerTokens[0];
-      gamesRef.child(gameId).update({
-        game_state: updatedGameState,
-        current_player: nextPlayer
-      });
+    console.log("clicking");
+    if (indexAvailable(boxIndex)) {
+      const updatedGameState = [...currentGameState];
+      if (currentPlayer === playerId) {
+        const playerNum = convertPlayerTokenToNumber(currentPlayer);
+        updatedGameState[boxIndex] = playerNum;
+        const nextPlayer = playerNum === 1 ? playerTokens[1] : playerTokens[0];
+        gamesRef.child(gameId).update({
+          game_state: updatedGameState,
+          current_player: nextPlayer
+        });
+      }
     }
   };
 
@@ -123,6 +156,11 @@ const GameBoard = () => {
         {playerTokens !== undefined && (
           <CurrentPlayerDisplay>
             You are player {convertPlayerTokenToNumber(playerId)}
+          </CurrentPlayerDisplay>
+        )}
+        {playerTokens !== undefined && (
+          <CurrentPlayerDisplay>
+            Player 2 token is {playerTokens[1]}
           </CurrentPlayerDisplay>
         )}
       </GameInfoContainer>
