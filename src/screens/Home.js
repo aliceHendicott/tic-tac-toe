@@ -7,9 +7,13 @@ import Contents from "../components/Contents";
 import { database } from "../firebase";
 
 const createGame = () => {
+  const p1 = generateToken(4);
+
   const newGame = {
-    p1_token: generateToken(4),
-    p2_token: generateToken(4)
+    p1_token: p1,
+    p2_token: generateToken(4),
+    current_player: p1,
+    game_state: [0, 0, 0, 0, 0, 0, 0, 0, 0]
   };
 
   const game_id = generateToken(6);

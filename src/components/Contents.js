@@ -5,7 +5,8 @@ const ContentsContainer = styled.div`
   max-width: 1120px;
   margin: 0px auto;
   padding: 50px 10px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
 `;
 
 const Contents = ({ children, ...props }) => (
