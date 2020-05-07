@@ -33,7 +33,7 @@ const createGame = () => {
 
 const Home = () => (
   <Contents>
-    <Button onClick={createGame}>Start a new game (4)</Button>
+    <Button onClick={createGame}>Start a new game</Button>
   </Contents>
 );
 

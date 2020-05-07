@@ -5,10 +5,19 @@ import Box from "../components/Box";
 
 import { database } from "../firebase";
 
-const GridContainer = styled(Box)`
+const Grid = styled(Box)`
+  position: absolute;
+  display: flex;
   width: 390px;
   height: 390px;
-  /* position: absolute; */
+  flex-wrap: wrap;
+`;
+
+const GridContainer = styled.div`
+  position: relative;
+  display: block;
+  width: 490px;
+  height: 490px;
 `;
 
 const GameInfoContainer = styled.div`
@@ -16,11 +25,8 @@ const GameInfoContainer = styled.div`
 `;
 
 const GridBox = styled.div`
-  display: inline-block;
-  width: 128px;
-  height: 128px;
-  z-index: 15;
-  border: 1px solid #393e41;
+  flex: 1 0 33%;
+  z-index: 10;
 `;
 
 const Line = styled.line`
@@ -48,10 +54,9 @@ const CurrentPlayerDisplay = styled.div`
 `;
 
 const GridSvg = styled.svg`
-  position: relative;
+  position: absolute;
   width: 390px;
   height: 390px;
-  z-index: 10;
   margin: 50px;
 `;
 
@@ -80,10 +85,10 @@ const getSVGToDisplay = value => {
 
 const GridLines = () => (
   <GridSvg>
-    <GridLine x1="126" x2="126" y1="4" y2="386" />
-    <GridLine x1="256" x2="256" y1="4" y2="386" />
-    <GridLine x1="4" x2="386" y1="126" y2="126" />
-    <GridLine x1="4" x2="386" y1="256" y2="256" />
+    <GridLine x1="130" x2="130" y1="4" y2="386" />
+    <GridLine x1="260" x2="260" y1="4" y2="386" />
+    <GridLine x1="4" x2="386" y1="130" y2="130" />
+    <GridLine x1="4" x2="386" y1="260" y2="260" />
   </GridSvg>
 );
 
@@ -140,12 +145,15 @@ const GameBoard = () => {
   return (
     <Contents>
       <GridContainer>
-        {currentGameState &&
-          currentGameState.map((value, index) => (
-            <GridBox id={"box-" + index} onClick={() => handleClick(index)}>
-              {getSVGToDisplay(value)}
-            </GridBox>
-          ))}
+        <Grid>
+          {currentGameState &&
+            currentGameState.map((value, index) => (
+              <GridBox id={"box-" + index} onClick={() => handleClick(index)}>
+                {getSVGToDisplay(value)}
+              </GridBox>
+            ))}
+        </Grid>
+        <GridLines />
       </GridContainer>
       <GameInfoContainer>
         {currentPlayer !== undefined && (
