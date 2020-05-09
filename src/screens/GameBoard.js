@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+
 import Contents from "../components/Contents";
 import Box from "../components/Box";
+import GridLines from "../components/Gridlines";
+
+import getPlayedSVGToDisplay from "../gameLogic/getPlayedSVGToDisplay";
+import convertPlayerTokenToNumber from "../gameLogic/convertPlayerTokenToNumber";
 
 import { database } from "../firebase";
 
@@ -29,68 +34,11 @@ const GridBox = styled.div`
   z-index: 10;
 `;
 
-const Line = styled.line`
-  stroke: #d282a6;
-  stroke-width: 8px;
-  stroke-linecap: round;
-`;
-
-const Circle = styled.circle`
-  stroke: #d282a6;
-  stroke-width: 8px;
-  fill: none;
-`;
-
-const EntrySvg = styled.svg`
-  width: 80px;
-  height: 80px;
-  margin: 25px;
-`;
-
 const CurrentPlayerDisplay = styled.div`
   font-size: 3rem;
   font-weight: 400;
   margin-bottom: 10px;
 `;
-
-const GridSvg = styled.svg`
-  position: absolute;
-  width: 390px;
-  height: 390px;
-  margin: 50px;
-`;
-
-const GridLine = styled.line`
-  stroke: #393e41;
-  stroke-width: 8px;
-  stroke-linecap: round;
-`;
-
-const getSVGToDisplay = value => {
-  if (value === 1) {
-    return (
-      <EntrySvg>
-        <Line x1="4" x2="76" y1="4" y2="76" />
-        <Line x1="76" x2="4" y1="4" y2="76" />
-      </EntrySvg>
-    );
-  } else if (value === 2) {
-    return (
-      <EntrySvg>
-        <Circle cx="40" cy="40" r="36" />
-      </EntrySvg>
-    );
-  } else return "";
-};
-
-const GridLines = () => (
-  <GridSvg>
-    <GridLine x1="130" x2="130" y1="4" y2="386" />
-    <GridLine x1="260" x2="260" y1="4" y2="386" />
-    <GridLine x1="4" x2="386" y1="130" y2="130" />
-    <GridLine x1="4" x2="386" y1="260" y2="260" />
-  </GridSvg>
-);
 
 const GameBoard = () => {
   const gameId = window.location.hash.replace(/^#\//, "").replace(/\?.*/, "");
@@ -102,14 +50,6 @@ const GameBoard = () => {
   const [currentGameState, setCurrentGameState] = useState(undefined);
   const [currentPlayer, setCurrentPlayer] = useState(undefined);
 
-  const convertPlayerTokenToNumber = token => {
-    if (playerTokens[0] === token) {
-      return 1;
-    } else {
-      return 2;
-    }
-  };
-
   const indexAvailable = boxIndex => {
     return currentGameState[boxIndex] === 0 ? true : false;
   };
@@ -119,7 +59,10 @@ const GameBoard = () => {
     if (indexAvailable(boxIndex)) {
       const updatedGameState = [...currentGameState];
       if (currentPlayer === playerId) {
-        const playerNum = convertPlayerTokenToNumber(currentPlayer);
+        const playerNum = convertPlayerTokenToNumber(
+          currentPlayer,
+          playerTokens
+        );
         updatedGameState[boxIndex] = playerNum;
         const nextPlayer = playerNum === 1 ? playerTokens[1] : playerTokens[0];
         gamesRef.child(gameId).update({
@@ -149,7 +92,7 @@ const GameBoard = () => {
           {currentGameState &&
             currentGameState.map((value, index) => (
               <GridBox id={"box-" + index} onClick={() => handleClick(index)}>
-                {getSVGToDisplay(value)}
+                {getPlayedSVGToDisplay(value)}
               </GridBox>
             ))}
         </Grid>
@@ -158,12 +101,13 @@ const GameBoard = () => {
       <GameInfoContainer>
         {currentPlayer !== undefined && (
           <CurrentPlayerDisplay>
-            Current Player: {convertPlayerTokenToNumber(currentPlayer)}
+            Current Player:{" "}
+            {convertPlayerTokenToNumber(currentPlayer, playerTokens)}
           </CurrentPlayerDisplay>
         )}
         {playerTokens !== undefined && (
           <CurrentPlayerDisplay>
-            You are player {convertPlayerTokenToNumber(playerId)}
+            You are player {convertPlayerTokenToNumber(playerId, playerTokens)}
           </CurrentPlayerDisplay>
         )}
         {playerTokens !== undefined && (
